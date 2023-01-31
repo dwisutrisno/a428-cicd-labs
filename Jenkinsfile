@@ -16,7 +16,10 @@ pipeline {
         stage('Test') { 
             steps {
                 sh './jenkins/scripts/test.sh' 
-                input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)'
+                input {
+                    message "Ready to deploy?"
+                    ok "Yes"
+                }
             }
         }
         stage('Deploy') {
