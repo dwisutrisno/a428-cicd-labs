@@ -16,10 +16,7 @@ pipeline {
         stage('Test') { 
             steps {
                 sh './jenkins/scripts/test.sh' 
-                input {
-                    message "Ready to deploy?"
-                    ok "Yes"
-                }
+                input(message: 'Please validate, this job will automatically ABORTED after 30 minutes even if no user input provided', ok: 'Proceed')
             }
         }
         stage('Deploy') {
