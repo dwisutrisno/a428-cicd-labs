@@ -1,17 +1,16 @@
 pipeline {
-
-    agent {
-        docker {
-            image 'node:16-buster-slim'
-            args '-p 3000:3000'
-        }
-    }
-
+    agent any
+   
     parameters {
         choice(choices:['Hello','Bye'], description: 'Users Choice', name: 'CHOICE')
     }
-
-    stages {
+   
+   stages {
+        stage('Init') {
+            steps('Log-in') {
+                echo 'Log-in'
+            }
+        }
         
         stage('Manual Step') {
             steps('Input') {
@@ -20,7 +19,7 @@ pipeline {
                 echo "choice env: " + env.CHOICE
             }
         }
-
+        
         stage('Hello') {
             when { 
                 expression { env.CHOICE == 'Hello' }
@@ -29,8 +28,8 @@ pipeline {
             steps('Execute')    {
                 echo 'Say Hello'
             } 
-        }
-
+        }       
+        
         stage('Bye') {
             when {
                 expression {env.CHOICE == 'Bye'}
@@ -40,28 +39,5 @@ pipeline {
                 echo 'Say Bye'    
             }
         }
-        
-        stage('Build') {
-            steps {
-                sh 'npm install'
-            }
-        }
-        
-        stage('Test') { 
-            steps {
-                sh './jenkins/scripts/test.sh' 
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
-                sleep 30
-                input message: 'Sudah selesai menggunakan React App? (Klik "Proceed" untuk mengakhiri)'
-                sh './jenkins/scripts/kill.sh'
-            }
-        }
-
     }
-    
 }
